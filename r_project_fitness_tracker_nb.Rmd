@@ -29,7 +29,7 @@ str(daily_activity)
 str(daily_sleep)
 ```
 
-## Clean daily dataframes, to prepare to join
+## Prepare daily dataframes to join
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 daily_activity_clean <- daily_activity %>% 
   mutate(ActivityDate= as.Date(ActivityDate, format="%m/%d/%Y"))
@@ -87,6 +87,7 @@ length(unique(daily_all_clean$id))
 ```
 
 ### Check calculated columns
+Total_distance is not tracker + logged, and it is also not just tracker for all rows. Unclear how total_distance was calculated, so tracker_distance will be used as primary measure. total_distance_km and total_distance_calc columns dropped.
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 colnames(daily_all_clean)
 daily_all_clean <- mutate(daily_all_clean, total_distance_calc=tracker_distance_km + logged_distance_km)
@@ -98,7 +99,38 @@ daily_all_clean %>%
 total_check2 <- ifelse(daily_all_clean$total_distance_km == daily_all_clean$tracker_distance_km, "TRUE", "FALSE")
 table(total_check2)
 ```
-Total_distance is not tracker + logged, and it is also not just tracker for all rows. Unclear how total_distance was calculated, so tracker_distance will be used as primary measure
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+daily_all_clean <- subset(daily_all_clean, select= -c(total_distance_km,total_distance_calc))
+```
+
+### Check weight convertions
+Check all weight measurements are accurate between kg and pound columns. 0.001 difference accounts for rounding differences in processing and will not impact future analysis.
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+daily_all_clean <- mutate(daily_all_clean, weight_pounds_calc=weight_kg*2.20462)
+daily_all_clean <- mutate(daily_all_clean, weight_pounds_dif= weight_pounds-weight_pounds_calc)
+weight_check <- ifelse(daily_all_clean$weight_pounds_dif > 0.001, "TRUE", "FALSE")
+table(weight_check)
+```
+## Prepare hourly dataframes to join
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+str(hourly_calories)
+str(hourly_intensity)
+str(hourly_steps)
+```
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+hourly_calories$ActivityHour<- as.POSIXct(hourly_calories$ActivityHour, format="%m/%d/%Y %H:%M:%S", tz="UTC")
+hourly_intensity$ActivityHour<- as.POSIXct(hourly_intensity$ActivityHour, format="%m/%d/%Y %H:%M:%S", tz="UTC")
+hourly_steps$ActivityHour<- as.POSIXct(hourly_steps$ActivityHour, format="%m/%d/%Y %H:%M:%S", tz="UTC")
+```
 
 
-###count unique id for activity, steps, calories, sleep, weight - shows usage
+TODO:
+*Investigate cartesian explosion more - do I actually need to join them? If so, how? If not, just clean the individual dataframes
+
+
+Ideas for analysis:
+*count unique id for activity, steps, calories, sleep, weight - shows usage - use groupby?
+*all variables by time
+*correlation of all variables
+

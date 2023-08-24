@@ -1936,8 +1936,8 @@ lgl (1): IsManualReport
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
 </div>
-<div id="clean-daily-dataframes-to-prepare-to-join" class="section level2">
-<h2>Clean daily dataframes, to prepare to join</h2>
+<div id="prepare-daily-dataframes-to-join" class="section level2">
+<h2>Prepare daily dataframes to join</h2>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGFpbHlfYWN0aXZpdHlfY2xlYW4gPC0gZGFpbHlfYWN0aXZpdHkgJT4lIFxuICBtdXRhdGUoQWN0aXZpdHlEYXRlPSBhcy5EYXRlKEFjdGl2aXR5RGF0ZSwgZm9ybWF0PVwiJW0vJWQvJVlcIikpXG5cbmRhaWx5X3NsZWVwX2NsZWFuIDwtIGRhaWx5X3NsZWVwICU+JSBcbiAgbXV0YXRlKFNsZWVwRGF5PSBhcy5EYXRlKFNsZWVwRGF5LCBmb3JtYXQ9XCIlbS8lZC8lWSAlSDolTTolU1wiKSlcblxuZGFpbHlfc2xlZXBfY2xlYW4gPC0gY2xlYW5fbmFtZXMoZGFpbHlfc2xlZXBfY2xlYW4pXG5kYWlseV9hY3Rpdml0eV9jbGVhbiA8LSBjbGVhbl9uYW1lcyhkYWlseV9hY3Rpdml0eV9jbGVhbilcblxuZGFpbHlfYWN0aXZpdHlfY2xlYW4gPC0gcmVuYW1lKGRhaWx5X2FjdGl2aXR5X2NsZWFuLCBkYXRlPWFjdGl2aXR5X2RhdGUpXG5kYWlseV9zbGVlcF9jbGVhbiA8LSByZW5hbWUoZGFpbHlfc2xlZXBfY2xlYW4sIGRhdGU9c2xlZXBfZGF5KVxuYGBgIn0= -->
@@ -2074,17 +2074,21 @@ data</p>
 </div>
 <div id="check-calculated-columns" class="section level3">
 <h3>Check calculated columns</h3>
+<p>Total_distance is not tracker + logged, and it is also not just
+tracker for all rows. Unclear how total_distance was calculated, so
+tracker_distance will be used as primary measure. total_distance_km and
+total_distance_calc columns dropped.</p>
 <!-- rnb-text-end -->
 <!-- rnb-chunk-begin -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuY29sbmFtZXMoZGFpbHlfYWxsX2NsZWFuKVxuYGBgIn0= -->
 <pre class="r"><code>colnames(daily_all_clean)</code></pre>
 <!-- rnb-source-end -->
-<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBcImlkXCIgICAgICAgICAgICAgICAgICAgICAgXCJkYXRlXCIgICAgICAgICAgICAgICAgICAgIFwidG90YWxfc3RlcHNcIiAgICAgICAgICAgICBcInRvdGFsX2Rpc3RhbmNlX2ttXCIgICAgICAgXCJ0cmFja2VyX2Rpc3RhbmNlX2ttXCIgICAgXG4gWzZdIFwibG9nZ2VkX2Rpc3RhbmNlX2ttXCIgICAgICBcInZlcnlfYWN0aXZlX2ttXCIgICAgICAgICAgXCJtb2RlcmF0ZV9hY3RpdmVfa21cIiAgICAgIFwibGlnaHRfYWN0aXZlX2ttXCIgICAgICAgICBcInNlZGVudGFyeV9hY3RpdmVfa21cIiAgICBcblsxMV0gXCJ2ZXJ5X2FjdGl2ZV9taW51dGVzXCIgICAgIFwibW9kZXJhdGVfYWN0aXZlX21pbnV0ZXNcIiBcImxpZ2h0bHlfYWN0aXZlX21pbnV0ZXNcIiAgXCJzZWRlbnRhcnlfbWludXRlc1wiICAgICAgIFwiY2Fsb3JpZXNcIiAgICAgICAgICAgICAgIFxuWzE2XSBcInRvdGFsX3NsZWVwX3JlY29yZHNcIiAgICAgXCJ0b3RhbF9taW51dGVzX2FzbGVlcFwiICAgIFwidG90YWxfbWludXRlc19pbl9iZWRcIiAgICBcIndlaWdodF9rZ1wiICAgICAgICAgICAgICAgXCJ3ZWlnaHRfcG91bmRzXCIgICAgICAgICAgXG5bMjFdIFwiZmF0XCIgICAgICAgICAgICAgICAgICAgICBcImJtaVwiICAgICAgICAgICAgICAgICAgICAgXCJpc19tYW51YWxfcmVwb3J0XCIgICAgICAgIFwibG9nX2lkXCIgICAgICAgICAgICAgICAgIFxuIn0= -->
+<!-- rnb-output-begin eyJkYXRhIjoiIFsxXSBcImlkXCIgICAgICAgICAgICAgICAgICAgICAgXCJkYXRlXCIgICAgICAgICAgICAgICAgICAgIFwidG90YWxfc3RlcHNcIiAgICAgICAgICAgICBcInRvdGFsX2Rpc3RhbmNlX2ttXCIgICAgICAgXCJ0cmFja2VyX2Rpc3RhbmNlX2ttXCIgICAgXG4gWzZdIFwibG9nZ2VkX2Rpc3RhbmNlX2ttXCIgICAgICBcInZlcnlfYWN0aXZlX2ttXCIgICAgICAgICAgXCJtb2RlcmF0ZV9hY3RpdmVfa21cIiAgICAgIFwibGlnaHRfYWN0aXZlX2ttXCIgICAgICAgICBcInNlZGVudGFyeV9hY3RpdmVfa21cIiAgICBcblsxMV0gXCJ2ZXJ5X2FjdGl2ZV9taW51dGVzXCIgICAgIFwibW9kZXJhdGVfYWN0aXZlX21pbnV0ZXNcIiBcImxpZ2h0bHlfYWN0aXZlX21pbnV0ZXNcIiAgXCJzZWRlbnRhcnlfbWludXRlc1wiICAgICAgIFwiY2Fsb3JpZXNcIiAgICAgICAgICAgICAgIFxuWzE2XSBcInRvdGFsX3NsZWVwX3JlY29yZHNcIiAgICAgXCJ0b3RhbF9taW51dGVzX2FzbGVlcFwiICAgIFwidG90YWxfbWludXRlc19pbl9iZWRcIiAgICBcIndlaWdodF9rZ1wiICAgICAgICAgICAgICAgXCJ3ZWlnaHRfcG91bmRzXCIgICAgICAgICAgXG5bMjFdIFwiZmF0XCIgICAgICAgICAgICAgICAgICAgICBcImJtaVwiICAgICAgICAgICAgICAgICAgICAgXCJpc19tYW51YWxfcmVwb3J0XCIgICAgICAgIFwibG9nX2lkXCIgICAgICAgICAgICAgICAgICBcInRvdGFsX2Rpc3RhbmNlX2NhbGNcIiAgICBcbiJ9 -->
 <pre><code> [1] &quot;id&quot;                      &quot;date&quot;                    &quot;total_steps&quot;             &quot;total_distance_km&quot;       &quot;tracker_distance_km&quot;    
  [6] &quot;logged_distance_km&quot;      &quot;very_active_km&quot;          &quot;moderate_active_km&quot;      &quot;light_active_km&quot;         &quot;sedentary_active_km&quot;    
 [11] &quot;very_active_minutes&quot;     &quot;moderate_active_minutes&quot; &quot;lightly_active_minutes&quot;  &quot;sedentary_minutes&quot;       &quot;calories&quot;               
 [16] &quot;total_sleep_records&quot;     &quot;total_minutes_asleep&quot;    &quot;total_minutes_in_bed&quot;    &quot;weight_kg&quot;               &quot;weight_pounds&quot;          
-[21] &quot;fat&quot;                     &quot;bmi&quot;                     &quot;is_manual_report&quot;        &quot;log_id&quot;                 </code></pre>
+[21] &quot;fat&quot;                     &quot;bmi&quot;                     &quot;is_manual_report&quot;        &quot;log_id&quot;                  &quot;total_distance_calc&quot;    </code></pre>
 <!-- rnb-output-end -->
 <!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGFpbHlfYWxsX2NsZWFuIDwtIG11dGF0ZShkYWlseV9hbGxfY2xlYW4sIHRvdGFsX2Rpc3RhbmNlX2NhbGM9dHJhY2tlcl9kaXN0YW5jZV9rbSArIGxvZ2dlZF9kaXN0YW5jZV9rbSlcbnRvdGFsX2NoZWNrIDwtIGlmZWxzZShkYWlseV9hbGxfY2xlYW4kdG90YWxfZGlzdGFuY2Vfa20gPT0gZGFpbHlfYWxsX2NsZWFuJHRvdGFsX2Rpc3RhbmNlX2NhbGMsIFwiVFJVRVwiLCBcIkZBTFNFXCIpXG50YWJsZSh0b3RhbF9jaGVjaylcbmBgYCJ9 -->
 <pre class="r"><code>daily_all_clean &lt;- mutate(daily_all_clean, total_distance_calc=tracker_distance_km + logged_distance_km)
@@ -2119,16 +2123,121 @@ FALSE  TRUE
 <!-- rnb-output-end -->
 <!-- rnb-chunk-end -->
 <!-- rnb-text-begin -->
-<p>Total_distance is not tracker + logged, and it is also not just
-tracker for all rows. Unclear how total_distance was calculated, so
-tracker_distance will be used as primary measure</p>
-<p>###count unique id for activity, steps, calories, sleep, weight -
-shows usage</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuZGFpbHlfYWxsX2NsZWFuIDwtIHN1YnNldChkYWlseV9hbGxfY2xlYW4sIHNlbGVjdD0gLWModG90YWxfZGlzdGFuY2Vfa20sdG90YWxfZGlzdGFuY2VfY2FsYykpXG5gYGAifQ== -->
+<pre class="r"><code>daily_all_clean &lt;- subset(daily_all_clean, select= -c(total_distance_km,total_distance_calc))</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+<div id="check-weight-convertions" class="section level3">
+<h3>Check weight convertions</h3>
+<p>Check all weight measurements are accurate between kg and pound
+columns. 0.001 difference accounts for rounding differences in
+processing and will not impact future analysis.</p>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxud2VpZ2h0X2NoZWNrIDwtIGlmZWxzZShkYWlseV9hbGxfY2xlYW4kd2VpZ2h0X3BvdW5kc19kaWYgPiAwLjAwMSwgXCJUUlVFXCIsIFwiRkFMU0VcIilcbnRhYmxlKHdlaWdodF9jaGVjaylcblxuYGBgIn0= -->
+<pre class="r"><code>weight_check &lt;- ifelse(daily_all_clean$weight_pounds_dif &gt; 0.001, &quot;TRUE&quot;, &quot;FALSE&quot;)
+table(weight_check)
+</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoid2VpZ2h0X2NoZWNrXG5GQUxTRSBcbiAgIDY3IFxuIn0= -->
+<pre><code>weight_check
+FALSE 
+   67 </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+</div>
+</div>
+<div id="prepare-hourly-dataframes-to-join" class="section level2">
+<h2>Prepare hourly dataframes to join</h2>
+<!-- rnb-text-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RyKGhvdXJseV9jYWxvcmllcylcbmBgYCJ9 -->
+<pre class="r"><code>str(hourly_calories)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoic3BjX3RibF8gWzIyLDA5OSDDlyAzXSAoUzM6IHNwZWNfdGJsX2RmL3RibF9kZi90YmwvZGF0YS5mcmFtZSlcbiAkIElkICAgICAgICAgIDogbnVtIFsxOjIyMDk5XSAxLjVlKzA5IDEuNWUrMDkgMS41ZSswOSAxLjVlKzA5IDEuNWUrMDkgLi4uXG4gJCBBY3Rpdml0eUhvdXI6IGNociBbMToyMjA5OV0gXCI0LzEyLzIwMTYgMTI6MDA6MDAgQU1cIiBcIjQvMTIvMjAxNiAxOjAwOjAwIEFNXCIgXCI0LzEyLzIwMTYgMjowMDowMCBBTVwiIFwiNC8xMi8yMDE2IDM6MDA6MDAgQU1cIiAuLi5cbiAkIENhbG9yaWVzICAgIDogbnVtIFsxOjIyMDk5XSA4MSA2MSA1OSA0NyA0OCA0OCA0OCA0NyA2OCAxNDEgLi4uXG4gLSBhdHRyKCosIFwic3BlY1wiKT1cbiAgLi4gY29scyhcbiAgLi4gICBJZCA9IGNvbF9kb3VibGUoKSxcbiAgLi4gICBBY3Rpdml0eUhvdXIgPSBjb2xfY2hhcmFjdGVyKCksXG4gIC4uICAgQ2Fsb3JpZXMgPSBjb2xfZG91YmxlKClcbiAgLi4gKVxuIC0gYXR0cigqLCBcInByb2JsZW1zXCIpPTxleHRlcm5hbHB0cj4gXG4ifQ== -->
+<pre><code>spc_tbl_ [22,099 × 3] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ Id          : num [1:22099] 1.5e+09 1.5e+09 1.5e+09 1.5e+09 1.5e+09 ...
+ $ ActivityHour: chr [1:22099] &quot;4/12/2016 12:00:00 AM&quot; &quot;4/12/2016 1:00:00 AM&quot; &quot;4/12/2016 2:00:00 AM&quot; &quot;4/12/2016 3:00:00 AM&quot; ...
+ $ Calories    : num [1:22099] 81 61 59 47 48 48 48 47 68 141 ...
+ - attr(*, &quot;spec&quot;)=
+  .. cols(
+  ..   Id = col_double(),
+  ..   ActivityHour = col_character(),
+  ..   Calories = col_double()
+  .. )
+ - attr(*, &quot;problems&quot;)=&lt;externalptr&gt; </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RyKGhvdXJseV9pbnRlbnNpdHkpXG5gYGAifQ== -->
+<pre class="r"><code>str(hourly_intensity)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoic3BjX3RibF8gWzIyLDA5OSDDlyA0XSAoUzM6IHNwZWNfdGJsX2RmL3RibF9kZi90YmwvZGF0YS5mcmFtZSlcbiAkIElkICAgICAgICAgICAgICA6IG51bSBbMToyMjA5OV0gMS41ZSswOSAxLjVlKzA5IDEuNWUrMDkgMS41ZSswOSAxLjVlKzA5IC4uLlxuICQgQWN0aXZpdHlIb3VyICAgIDogY2hyIFsxOjIyMDk5XSBcIjQvMTIvMjAxNiAxMjowMDowMCBBTVwiIFwiNC8xMi8yMDE2IDE6MDA6MDAgQU1cIiBcIjQvMTIvMjAxNiAyOjAwOjAwIEFNXCIgXCI0LzEyLzIwMTYgMzowMDowMCBBTVwiIC4uLlxuICQgVG90YWxJbnRlbnNpdHkgIDogbnVtIFsxOjIyMDk5XSAyMCA4IDcgMCAwIDAgMCAwIDEzIDMwIC4uLlxuICQgQXZlcmFnZUludGVuc2l0eTogbnVtIFsxOjIyMDk5XSAwLjMzMyAwLjEzMyAwLjExNyAwIDAgLi4uXG4gLSBhdHRyKCosIFwic3BlY1wiKT1cbiAgLi4gY29scyhcbiAgLi4gICBJZCA9IGNvbF9kb3VibGUoKSxcbiAgLi4gICBBY3Rpdml0eUhvdXIgPSBjb2xfY2hhcmFjdGVyKCksXG4gIC4uICAgVG90YWxJbnRlbnNpdHkgPSBjb2xfZG91YmxlKCksXG4gIC4uICAgQXZlcmFnZUludGVuc2l0eSA9IGNvbF9kb3VibGUoKVxuICAuLiApXG4gLSBhdHRyKCosIFwicHJvYmxlbXNcIik9PGV4dGVybmFscHRyPiBcbiJ9 -->
+<pre><code>spc_tbl_ [22,099 × 4] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ Id              : num [1:22099] 1.5e+09 1.5e+09 1.5e+09 1.5e+09 1.5e+09 ...
+ $ ActivityHour    : chr [1:22099] &quot;4/12/2016 12:00:00 AM&quot; &quot;4/12/2016 1:00:00 AM&quot; &quot;4/12/2016 2:00:00 AM&quot; &quot;4/12/2016 3:00:00 AM&quot; ...
+ $ TotalIntensity  : num [1:22099] 20 8 7 0 0 0 0 0 13 30 ...
+ $ AverageIntensity: num [1:22099] 0.333 0.133 0.117 0 0 ...
+ - attr(*, &quot;spec&quot;)=
+  .. cols(
+  ..   Id = col_double(),
+  ..   ActivityHour = col_character(),
+  ..   TotalIntensity = col_double(),
+  ..   AverageIntensity = col_double()
+  .. )
+ - attr(*, &quot;problems&quot;)=&lt;externalptr&gt; </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuc3RyKGhvdXJseV9zdGVwcylcbmBgYCJ9 -->
+<pre class="r"><code>str(hourly_steps)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoic3BjX3RibF8gWzIyLDA5OSDDlyAzXSAoUzM6IHNwZWNfdGJsX2RmL3RibF9kZi90YmwvZGF0YS5mcmFtZSlcbiAkIElkICAgICAgICAgIDogbnVtIFsxOjIyMDk5XSAxLjVlKzA5IDEuNWUrMDkgMS41ZSswOSAxLjVlKzA5IDEuNWUrMDkgLi4uXG4gJCBBY3Rpdml0eUhvdXI6IGNociBbMToyMjA5OV0gXCI0LzEyLzIwMTYgMTI6MDA6MDAgQU1cIiBcIjQvMTIvMjAxNiAxOjAwOjAwIEFNXCIgXCI0LzEyLzIwMTYgMjowMDowMCBBTVwiIFwiNC8xMi8yMDE2IDM6MDA6MDAgQU1cIiAuLi5cbiAkIFN0ZXBUb3RhbCAgIDogbnVtIFsxOjIyMDk5XSAzNzMgMTYwIDE1MSAwIDAgLi4uXG4gLSBhdHRyKCosIFwic3BlY1wiKT1cbiAgLi4gY29scyhcbiAgLi4gICBJZCA9IGNvbF9kb3VibGUoKSxcbiAgLi4gICBBY3Rpdml0eUhvdXIgPSBjb2xfY2hhcmFjdGVyKCksXG4gIC4uICAgU3RlcFRvdGFsID0gY29sX2RvdWJsZSgpXG4gIC4uIClcbiAtIGF0dHIoKiwgXCJwcm9ibGVtc1wiKT08ZXh0ZXJuYWxwdHI+IFxuIn0= -->
+<pre><code>spc_tbl_ [22,099 × 3] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ Id          : num [1:22099] 1.5e+09 1.5e+09 1.5e+09 1.5e+09 1.5e+09 ...
+ $ ActivityHour: chr [1:22099] &quot;4/12/2016 12:00:00 AM&quot; &quot;4/12/2016 1:00:00 AM&quot; &quot;4/12/2016 2:00:00 AM&quot; &quot;4/12/2016 3:00:00 AM&quot; ...
+ $ StepTotal   : num [1:22099] 373 160 151 0 0 ...
+ - attr(*, &quot;spec&quot;)=
+  .. cols(
+  ..   Id = col_double(),
+  ..   ActivityHour = col_character(),
+  ..   StepTotal = col_double()
+  .. )
+ - attr(*, &quot;problems&quot;)=&lt;externalptr&gt; </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-chunk-begin -->
+<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxuaG91cmx5X2ludGVuc2l0eSRBY3Rpdml0eUhvdXI8LSBhcy5QT1NJWGN0KGhvdXJseV9pbnRlbnNpdHkkQWN0aXZpdHlIb3VyLCBmb3JtYXQ9XCIlbS8lZC8lWSAlSDolTTolU1wiLCB0ej1cIlVUQ1wiKVxuc3RyKGhvdXJseV9pbnRlbnNpdHkpXG5gYGAifQ== -->
+<pre class="r"><code>hourly_intensity$ActivityHour&lt;- as.POSIXct(hourly_intensity$ActivityHour, format=&quot;%m/%d/%Y %H:%M:%S&quot;, tz=&quot;UTC&quot;)
+str(hourly_intensity)</code></pre>
+<!-- rnb-source-end -->
+<!-- rnb-output-begin eyJkYXRhIjoic3BjX3RibF8gWzIyLDA5OSDDlyA0XSAoUzM6IHNwZWNfdGJsX2RmL3RibF9kZi90YmwvZGF0YS5mcmFtZSlcbiAkIElkICAgICAgICAgICAgICA6IG51bSBbMToyMjA5OV0gMS41ZSswOSAxLjVlKzA5IDEuNWUrMDkgMS41ZSswOSAxLjVlKzA5IC4uLlxuICQgQWN0aXZpdHlIb3VyICAgIDogUE9TSVhjdFsxOjIyMDk5XSwgZm9ybWF0OiBcIjIwMTYtMDQtMTIgMTI6MDA6MDBcIiBcIjIwMTYtMDQtMTIgMDE6MDA6MDBcIiBcIjIwMTYtMDQtMTIgMDI6MDA6MDBcIiBcIjIwMTYtMDQtMTIgMDM6MDA6MDBcIiAuLi5cbiAkIFRvdGFsSW50ZW5zaXR5ICA6IG51bSBbMToyMjA5OV0gMjAgOCA3IDAgMCAwIDAgMCAxMyAzMCAuLi5cbiAkIEF2ZXJhZ2VJbnRlbnNpdHk6IG51bSBbMToyMjA5OV0gMC4zMzMgMC4xMzMgMC4xMTcgMCAwIC4uLlxuIC0gYXR0cigqLCBcInNwZWNcIik9XG4gIC4uIGNvbHMoXG4gIC4uICAgSWQgPSBjb2xfZG91YmxlKCksXG4gIC4uICAgQWN0aXZpdHlIb3VyID0gY29sX2NoYXJhY3RlcigpLFxuICAuLiAgIFRvdGFsSW50ZW5zaXR5ID0gY29sX2RvdWJsZSgpLFxuICAuLiAgIEF2ZXJhZ2VJbnRlbnNpdHkgPSBjb2xfZG91YmxlKClcbiAgLi4gKVxuIC0gYXR0cigqLCBcInByb2JsZW1zXCIpPTxleHRlcm5hbHB0cj4gXG4ifQ== -->
+<pre><code>spc_tbl_ [22,099 × 4] (S3: spec_tbl_df/tbl_df/tbl/data.frame)
+ $ Id              : num [1:22099] 1.5e+09 1.5e+09 1.5e+09 1.5e+09 1.5e+09 ...
+ $ ActivityHour    : POSIXct[1:22099], format: &quot;2016-04-12 12:00:00&quot; &quot;2016-04-12 01:00:00&quot; &quot;2016-04-12 02:00:00&quot; &quot;2016-04-12 03:00:00&quot; ...
+ $ TotalIntensity  : num [1:22099] 20 8 7 0 0 0 0 0 13 30 ...
+ $ AverageIntensity: num [1:22099] 0.333 0.133 0.117 0 0 ...
+ - attr(*, &quot;spec&quot;)=
+  .. cols(
+  ..   Id = col_double(),
+  ..   ActivityHour = col_character(),
+  ..   TotalIntensity = col_double(),
+  ..   AverageIntensity = col_double()
+  .. )
+ - attr(*, &quot;problems&quot;)=&lt;externalptr&gt; </code></pre>
+<!-- rnb-output-end -->
+<!-- rnb-chunk-end -->
+<!-- rnb-text-begin -->
+<p>TODO: *Investigate cartesian explosion more - do I actually need to
+join them? If so, how? If not, just clean the individual dataframes</p>
+<p>Ideas for analysis: <em>count unique id for activity, steps,
+calories, sleep, weight - shows usage - use groupby? </em>all variables
+by time *correlation of all variables</p>
 <!-- rnb-text-end -->
 </div>
-</div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIkZpdG5lc3MgVHJhY2tlciAtIEEgcHJvamVjdCBpbiBSIg0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KIyMgSW5zdGFsbCBwYWNrYWdlcw0KYGBge3IgZWNobz1UUlVFLCBtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFfQ0KaW5zdGFsbC5wYWNrYWdlcygidGlkeXZlcnNlIikNCmxpYnJhcnkodGlkeXZlcnNlKQ0KaW5zdGFsbC5wYWNrYWdlcygiamFuaXRvciIpDQpsaWJyYXJ5KGphbml0b3IpDQpgYGANCg0KIyMgUmVhZCBpbiBkYXRhIGZyb20gY3N2DQpgYGB7ciBlY2hvPVRSVUUsIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0V9DQpkYWlseV9hY3Rpdml0eSA8LSByZWFkX2NzdigiQzovVXNlcnMva2F0YmEvRGF0YSBhbmFseXNpcyBsZWFybmluZy9Qb3J0Zm9saW8vQmVsbGFiZWF0Q2FzZVN0dWR5L0ZpdGFiYXNlIERhdGEgNC4xMi4xNi01LjEyLjE2L2RhaWx5QWN0aXZpdHlfbWVyZ2VkLmNzdiIpDQpkYWlseV9zbGVlcCA8LSByZWFkX2NzdigiQzovVXNlcnMva2F0YmEvRGF0YSBhbmFseXNpcyBsZWFybmluZy9Qb3J0Zm9saW8vQmVsbGFiZWF0Q2FzZVN0dWR5L0ZpdGFiYXNlIERhdGEgNC4xMi4xNi01LjEyLjE2L3NsZWVwRGF5X21lcmdlZC5jc3YiKQ0KaG91cmx5X2NhbG9yaWVzIDwtIHJlYWRfY3N2KCJDOi9Vc2Vycy9rYXRiYS9EYXRhIGFuYWx5c2lzIGxlYXJuaW5nL1BvcnRmb2xpby9CZWxsYWJlYXRDYXNlU3R1ZHkvRml0YWJhc2UgRGF0YSA0LjEyLjE2LTUuMTIuMTYvaG91cmx5Q2Fsb3JpZXNfbWVyZ2VkLmNzdiIpDQpob3VybHlfaW50ZW5zaXR5IDwtIHJlYWRfY3N2KCJDOi9Vc2Vycy9rYXRiYS9EYXRhIGFuYWx5c2lzIGxlYXJuaW5nL1BvcnRmb2xpby9CZWxsYWJlYXRDYXNlU3R1ZHkvRml0YWJhc2UgRGF0YSA0LjEyLjE2LTUuMTIuMTYvaG91cmx5SW50ZW5zaXRpZXNfbWVyZ2VkLmNzdiIpDQpob3VybHlfc3RlcHMgPC0gcmVhZF9jc3YoIkM6L1VzZXJzL2thdGJhL0RhdGEgYW5hbHlzaXMgbGVhcm5pbmcvUG9ydGZvbGlvL0JlbGxhYmVhdENhc2VTdHVkeS9GaXRhYmFzZSBEYXRhIDQuMTIuMTYtNS4xMi4xNi9ob3VybHlTdGVwc19tZXJnZWQuY3N2IikNCndlaWdodCA8LSByZWFkX2NzdigiQzovVXNlcnMva2F0YmEvRGF0YSBhbmFseXNpcyBsZWFybmluZy9Qb3J0Zm9saW8vQmVsbGFiZWF0Q2FzZVN0dWR5L0ZpdGFiYXNlIERhdGEgNC4xMi4xNi01LjEyLjE2L3dlaWdodExvZ0luZm9fbWVyZ2VkLmNzdiIpDQpgYGANCg0KIyMgRXhwbG9yZSBkYWlseSBkYXRhZnJhbWVzIA0KYGBge3IgZWNobz1UUlVFLCBtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFfQ0KaGVhZChkYWlseV9hY3Rpdml0eSkNCmhlYWQoZGFpbHlfc2xlZXApDQpzdHIoZGFpbHlfYWN0aXZpdHkpDQpzdHIoZGFpbHlfc2xlZXApDQpgYGANCg0KIyMgQ2xlYW4gZGFpbHkgZGF0YWZyYW1lcywgdG8gcHJlcGFyZSB0byBqb2luDQpgYGB7ciBlY2hvPVRSVUUsIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0V9DQpkYWlseV9hY3Rpdml0eV9jbGVhbiA8LSBkYWlseV9hY3Rpdml0eSAlPiUgDQogIG11dGF0ZShBY3Rpdml0eURhdGU9IGFzLkRhdGUoQWN0aXZpdHlEYXRlLCBmb3JtYXQ9IiVtLyVkLyVZIikpDQoNCmRhaWx5X3NsZWVwX2NsZWFuIDwtIGRhaWx5X3NsZWVwICU+JSANCiAgbXV0YXRlKFNsZWVwRGF5PSBhcy5EYXRlKFNsZWVwRGF5LCBmb3JtYXQ9IiVtLyVkLyVZICVIOiVNOiVTIikpDQoNCmRhaWx5X3NsZWVwX2NsZWFuIDwtIGNsZWFuX25hbWVzKGRhaWx5X3NsZWVwX2NsZWFuKQ0KZGFpbHlfYWN0aXZpdHlfY2xlYW4gPC0gY2xlYW5fbmFtZXMoZGFpbHlfYWN0aXZpdHlfY2xlYW4pDQoNCmRhaWx5X2FjdGl2aXR5X2NsZWFuIDwtIHJlbmFtZShkYWlseV9hY3Rpdml0eV9jbGVhbiwgZGF0ZT1hY3Rpdml0eV9kYXRlKQ0KZGFpbHlfc2xlZXBfY2xlYW4gPC0gcmVuYW1lKGRhaWx5X3NsZWVwX2NsZWFuLCBkYXRlPXNsZWVwX2RheSkNCmBgYA0KDQojIyBKb2luIGRhaWx5IGRhdGFmcmFtZXMNCmBgYHtyIGVjaG89VFJVRSwgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0NCmRhaWx5IDwtIGZ1bGxfam9pbihkYWlseV9hY3Rpdml0eV9jbGVhbiwgZGFpbHlfc2xlZXBfY2xlYW4sIGJ5ID0gYygiaWQiLCAiZGF0ZSIpKQ0KYGBgDQoNCiMjIEFkZGl0aW9uYWwgam9pbiB3aXRoIHdlaWdodCANCmBgYHtyIGVjaG89VFJVRSwgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0NCndlaWdodF9jbGVhbiA8LSBjbGVhbl9uYW1lcyh3ZWlnaHQpDQp3ZWlnaHRfY2xlYW4gPC0gd2VpZ2h0X2NsZWFuICU+JQ0KICBtdXRhdGUoZGF0ZT0gYXMuRGF0ZShkYXRlLCBmb3JtYXQ9IiVtLyVkLyVZICVIOiVNOiVTIikpDQpkYWlseV9hbGwgPC0gZnVsbF9qb2luKGRhaWx5LCB3ZWlnaHRfY2xlYW4sIGJ5PSBjKCJpZCIsICJkYXRlIikpDQpgYGANCg0KIyMgQ2xlYW4gZGFpbHlfYWxsIGRhdGFmcmFtZQ0KDQojIyMgUmV2aWV3IGRhdGF0eXBlcywgbWluIGFuZCBtYXggdmFsdWVzDQpEYXRhdHlwZXMsIG1pbiBhbmQgbWF4IHZhbHVlcyBhbGwgbWFrZSBzZW5zZSB3aXRoIHRoZSBuYXR1cmUgb2YgdGhlIGRhdGENCmBgYHtyIGVjaG89VFJVRSwgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0NCnN1bW1hcnkoZGFpbHlfYWxsKQ0KYGBgDQoNCiMjIyBSZW5hbWUgY29sdW1ucyBmb3IgY29uc2lzdGVuY3kgYWNyb3NzIGRhdGFzZXQNCmBgYHtyIGVjaG89VFJVRSwgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0NCmRhaWx5X2FsbF9jbGVhbiA8LSByZW5hbWUoZGFpbHlfYWxsLCB0b3RhbF9kaXN0YW5jZV9rbT10b3RhbF9kaXN0YW5jZSwgdHJhY2tlcl9kaXN0YW5jZV9rbT10cmFja2VyX2Rpc3RhbmNlLCANCiAgICAgICAgICAgICAgICAgICAgICAgICAgbG9nZ2VkX2Rpc3RhbmNlX2ttPWxvZ2dlZF9hY3Rpdml0aWVzX2Rpc3RhbmNlLCB2ZXJ5X2FjdGl2ZV9rbT12ZXJ5X2FjdGl2ZV9kaXN0YW5jZSwgDQogICAgICAgICAgICAgICAgICAgICAgICAgIG1vZGVyYXRlX2FjdGl2ZV9rbT1tb2RlcmF0ZWx5X2FjdGl2ZV9kaXN0YW5jZSwgbGlnaHRfYWN0aXZlX2ttPWxpZ2h0X2FjdGl2ZV9kaXN0YW5jZSwgDQogICAgICAgICAgICAgICAgICAgICAgICAgIHNlZGVudGFyeV9hY3RpdmVfa209c2VkZW50YXJ5X2FjdGl2ZV9kaXN0YW5jZSwgbW9kZXJhdGVfYWN0aXZlX21pbnV0ZXM9ZmFpcmx5X2FjdGl2ZV9taW51dGVzLA0KICAgICAgICAgICAgICAgICAgICAgICAgICB0b3RhbF9taW51dGVzX2luX2JlZD10b3RhbF90aW1lX2luX2JlZCkNCmBgYA0KDQojIyMgQ2hlY2sgZm9yIGR1cGxpY2F0ZWQgcm93cw0KUmVtb3ZlIDMgZHVwbGljYXRlZCByb3dzDQpgYGB7ciBlY2hvPVRSVUUsIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0V9DQpzdW0oZHVwbGljYXRlZChkYWlseV9hbGxfY2xlYW4pKQ0KZGFpbHlfYWxsX2NsZWFuIDwtIGRhaWx5X2FsbF9jbGVhblshZHVwbGljYXRlZChkYWlseV9hbGxfY2xlYW4pLCBdDQpgYGANCiMjIyBDaGVjayBudW1iZXIgb2YgdW5pcXVlIGlkcyBmb3IgbnVtYmVyIG9mIHVzZXJzDQpTZWUgJ2NvbnNpZGVyYXRpb25zJyBmb3IgZGlzY3Vzc2lvbg0KYGBge3IgZWNobz1UUlVFLCBtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFfQ0KbGVuZ3RoKHVuaXF1ZShkYWlseV9hbGxfY2xlYW4kaWQpKQ0KYGBgDQoNCiMjIyBDaGVjayBjYWxjdWxhdGVkIGNvbHVtbnMNCmBgYHtyIGVjaG89VFJVRSwgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0NCmNvbG5hbWVzKGRhaWx5X2FsbF9jbGVhbikNCmRhaWx5X2FsbF9jbGVhbiA8LSBtdXRhdGUoZGFpbHlfYWxsX2NsZWFuLCB0b3RhbF9kaXN0YW5jZV9jYWxjPXRyYWNrZXJfZGlzdGFuY2Vfa20gKyBsb2dnZWRfZGlzdGFuY2Vfa20pDQp0b3RhbF9jaGVjayA8LSBpZmVsc2UoZGFpbHlfYWxsX2NsZWFuJHRvdGFsX2Rpc3RhbmNlX2ttID09IGRhaWx5X2FsbF9jbGVhbiR0b3RhbF9kaXN0YW5jZV9jYWxjLCAiVFJVRSIsICJGQUxTRSIpDQp0YWJsZSh0b3RhbF9jaGVjaykNCmRhaWx5X2FsbF9jbGVhbiAlPiUNCiAgZmlsdGVyKHRvdGFsX2Rpc3RhbmNlX2ttIT10b3RhbF9kaXN0YW5jZV9jYWxjKSAlPiUNCiAgYXJyYW5nZShsb2dnZWRfZGlzdGFuY2Vfa20pDQp0b3RhbF9jaGVjazIgPC0gaWZlbHNlKGRhaWx5X2FsbF9jbGVhbiR0b3RhbF9kaXN0YW5jZV9rbSA9PSBkYWlseV9hbGxfY2xlYW4kdHJhY2tlcl9kaXN0YW5jZV9rbSwgIlRSVUUiLCAiRkFMU0UiKQ0KdGFibGUodG90YWxfY2hlY2syKQ0KYGBgDQpUb3RhbF9kaXN0YW5jZSBpcyBub3QgdHJhY2tlciArIGxvZ2dlZCwgYW5kIGl0IGlzIGFsc28gbm90IGp1c3QgdHJhY2tlciBmb3IgYWxsIHJvd3MuIFVuY2xlYXIgaG93IHRvdGFsX2Rpc3RhbmNlIHdhcyBjYWxjdWxhdGVkLCBzbyB0cmFja2VyX2Rpc3RhbmNlIHdpbGwgYmUgdXNlZCBhcyBwcmltYXJ5IG1lYXN1cmUNCg0KDQojIyNjb3VudCB1bmlxdWUgaWQgZm9yIGFjdGl2aXR5LCBzdGVwcywgY2Fsb3JpZXMsIHNsZWVwLCB3ZWlnaHQgLSBzaG93cyB1c2FnZQ==</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIkZpdG5lc3MgVHJhY2tlciAtIEEgcHJvamVjdCBpbiBSIg0Kb3V0cHV0OiBodG1sX25vdGVib29rDQotLS0NCg0KIyMgSW5zdGFsbCBwYWNrYWdlcw0KYGBge3IgZWNobz1UUlVFLCBtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFfQ0KaW5zdGFsbC5wYWNrYWdlcygidGlkeXZlcnNlIikNCmxpYnJhcnkodGlkeXZlcnNlKQ0KaW5zdGFsbC5wYWNrYWdlcygiamFuaXRvciIpDQpsaWJyYXJ5KGphbml0b3IpDQpgYGANCg0KIyMgUmVhZCBpbiBkYXRhIGZyb20gY3N2DQpgYGB7ciBlY2hvPVRSVUUsIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0V9DQpkYWlseV9hY3Rpdml0eSA8LSByZWFkX2NzdigiQzovVXNlcnMva2F0YmEvRGF0YSBhbmFseXNpcyBsZWFybmluZy9Qb3J0Zm9saW8vQmVsbGFiZWF0Q2FzZVN0dWR5L0ZpdGFiYXNlIERhdGEgNC4xMi4xNi01LjEyLjE2L2RhaWx5QWN0aXZpdHlfbWVyZ2VkLmNzdiIpDQpkYWlseV9zbGVlcCA8LSByZWFkX2NzdigiQzovVXNlcnMva2F0YmEvRGF0YSBhbmFseXNpcyBsZWFybmluZy9Qb3J0Zm9saW8vQmVsbGFiZWF0Q2FzZVN0dWR5L0ZpdGFiYXNlIERhdGEgNC4xMi4xNi01LjEyLjE2L3NsZWVwRGF5X21lcmdlZC5jc3YiKQ0KaG91cmx5X2NhbG9yaWVzIDwtIHJlYWRfY3N2KCJDOi9Vc2Vycy9rYXRiYS9EYXRhIGFuYWx5c2lzIGxlYXJuaW5nL1BvcnRmb2xpby9CZWxsYWJlYXRDYXNlU3R1ZHkvRml0YWJhc2UgRGF0YSA0LjEyLjE2LTUuMTIuMTYvaG91cmx5Q2Fsb3JpZXNfbWVyZ2VkLmNzdiIpDQpob3VybHlfaW50ZW5zaXR5IDwtIHJlYWRfY3N2KCJDOi9Vc2Vycy9rYXRiYS9EYXRhIGFuYWx5c2lzIGxlYXJuaW5nL1BvcnRmb2xpby9CZWxsYWJlYXRDYXNlU3R1ZHkvRml0YWJhc2UgRGF0YSA0LjEyLjE2LTUuMTIuMTYvaG91cmx5SW50ZW5zaXRpZXNfbWVyZ2VkLmNzdiIpDQpob3VybHlfc3RlcHMgPC0gcmVhZF9jc3YoIkM6L1VzZXJzL2thdGJhL0RhdGEgYW5hbHlzaXMgbGVhcm5pbmcvUG9ydGZvbGlvL0JlbGxhYmVhdENhc2VTdHVkeS9GaXRhYmFzZSBEYXRhIDQuMTIuMTYtNS4xMi4xNi9ob3VybHlTdGVwc19tZXJnZWQuY3N2IikNCndlaWdodCA8LSByZWFkX2NzdigiQzovVXNlcnMva2F0YmEvRGF0YSBhbmFseXNpcyBsZWFybmluZy9Qb3J0Zm9saW8vQmVsbGFiZWF0Q2FzZVN0dWR5L0ZpdGFiYXNlIERhdGEgNC4xMi4xNi01LjEyLjE2L3dlaWdodExvZ0luZm9fbWVyZ2VkLmNzdiIpDQpgYGANCg0KIyMgRXhwbG9yZSBkYWlseSBkYXRhZnJhbWVzIA0KYGBge3IgZWNobz1UUlVFLCBtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFfQ0KaGVhZChkYWlseV9hY3Rpdml0eSkNCmhlYWQoZGFpbHlfc2xlZXApDQpzdHIoZGFpbHlfYWN0aXZpdHkpDQpzdHIoZGFpbHlfc2xlZXApDQpgYGANCg0KIyMgUHJlcGFyZSBkYWlseSBkYXRhZnJhbWVzIHRvIGpvaW4NCmBgYHtyIGVjaG89VFJVRSwgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0NCmRhaWx5X2FjdGl2aXR5X2NsZWFuIDwtIGRhaWx5X2FjdGl2aXR5ICU+JSANCiAgbXV0YXRlKEFjdGl2aXR5RGF0ZT0gYXMuRGF0ZShBY3Rpdml0eURhdGUsIGZvcm1hdD0iJW0vJWQvJVkiKSkNCg0KZGFpbHlfc2xlZXBfY2xlYW4gPC0gZGFpbHlfc2xlZXAgJT4lIA0KICBtdXRhdGUoU2xlZXBEYXk9IGFzLkRhdGUoU2xlZXBEYXksIGZvcm1hdD0iJW0vJWQvJVkgJUg6JU06JVMiKSkNCg0KZGFpbHlfc2xlZXBfY2xlYW4gPC0gY2xlYW5fbmFtZXMoZGFpbHlfc2xlZXBfY2xlYW4pDQpkYWlseV9hY3Rpdml0eV9jbGVhbiA8LSBjbGVhbl9uYW1lcyhkYWlseV9hY3Rpdml0eV9jbGVhbikNCg0KZGFpbHlfYWN0aXZpdHlfY2xlYW4gPC0gcmVuYW1lKGRhaWx5X2FjdGl2aXR5X2NsZWFuLCBkYXRlPWFjdGl2aXR5X2RhdGUpDQpkYWlseV9zbGVlcF9jbGVhbiA8LSByZW5hbWUoZGFpbHlfc2xlZXBfY2xlYW4sIGRhdGU9c2xlZXBfZGF5KQ0KYGBgDQoNCiMjIEpvaW4gZGFpbHkgZGF0YWZyYW1lcw0KYGBge3IgZWNobz1UUlVFLCBtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFfQ0KZGFpbHkgPC0gZnVsbF9qb2luKGRhaWx5X2FjdGl2aXR5X2NsZWFuLCBkYWlseV9zbGVlcF9jbGVhbiwgYnkgPSBjKCJpZCIsICJkYXRlIikpDQpgYGANCg0KIyMgQWRkaXRpb25hbCBqb2luIHdpdGggd2VpZ2h0IA0KYGBge3IgZWNobz1UUlVFLCBtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFfQ0Kd2VpZ2h0X2NsZWFuIDwtIGNsZWFuX25hbWVzKHdlaWdodCkNCndlaWdodF9jbGVhbiA8LSB3ZWlnaHRfY2xlYW4gJT4lDQogIG11dGF0ZShkYXRlPSBhcy5EYXRlKGRhdGUsIGZvcm1hdD0iJW0vJWQvJVkgJUg6JU06JVMiKSkNCmRhaWx5X2FsbCA8LSBmdWxsX2pvaW4oZGFpbHksIHdlaWdodF9jbGVhbiwgYnk9IGMoImlkIiwgImRhdGUiKSkNCmBgYA0KDQojIyBDbGVhbiBkYWlseV9hbGwgZGF0YWZyYW1lDQoNCiMjIyBSZXZpZXcgZGF0YXR5cGVzLCBtaW4gYW5kIG1heCB2YWx1ZXMNCkRhdGF0eXBlcywgbWluIGFuZCBtYXggdmFsdWVzIGFsbCBtYWtlIHNlbnNlIHdpdGggdGhlIG5hdHVyZSBvZiB0aGUgZGF0YQ0KYGBge3IgZWNobz1UUlVFLCBtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFfQ0Kc3VtbWFyeShkYWlseV9hbGwpDQpgYGANCg0KIyMjIFJlbmFtZSBjb2x1bW5zIGZvciBjb25zaXN0ZW5jeSBhY3Jvc3MgZGF0YXNldA0KYGBge3IgZWNobz1UUlVFLCBtZXNzYWdlPUZBTFNFLCB3YXJuaW5nPUZBTFNFfQ0KZGFpbHlfYWxsX2NsZWFuIDwtIHJlbmFtZShkYWlseV9hbGwsIHRvdGFsX2Rpc3RhbmNlX2ttPXRvdGFsX2Rpc3RhbmNlLCB0cmFja2VyX2Rpc3RhbmNlX2ttPXRyYWNrZXJfZGlzdGFuY2UsIA0KICAgICAgICAgICAgICAgICAgICAgICAgICBsb2dnZWRfZGlzdGFuY2Vfa209bG9nZ2VkX2FjdGl2aXRpZXNfZGlzdGFuY2UsIHZlcnlfYWN0aXZlX2ttPXZlcnlfYWN0aXZlX2Rpc3RhbmNlLCANCiAgICAgICAgICAgICAgICAgICAgICAgICAgbW9kZXJhdGVfYWN0aXZlX2ttPW1vZGVyYXRlbHlfYWN0aXZlX2Rpc3RhbmNlLCBsaWdodF9hY3RpdmVfa209bGlnaHRfYWN0aXZlX2Rpc3RhbmNlLCANCiAgICAgICAgICAgICAgICAgICAgICAgICAgc2VkZW50YXJ5X2FjdGl2ZV9rbT1zZWRlbnRhcnlfYWN0aXZlX2Rpc3RhbmNlLCBtb2RlcmF0ZV9hY3RpdmVfbWludXRlcz1mYWlybHlfYWN0aXZlX21pbnV0ZXMsDQogICAgICAgICAgICAgICAgICAgICAgICAgIHRvdGFsX21pbnV0ZXNfaW5fYmVkPXRvdGFsX3RpbWVfaW5fYmVkKQ0KYGBgDQoNCiMjIyBDaGVjayBmb3IgZHVwbGljYXRlZCByb3dzDQpSZW1vdmUgMyBkdXBsaWNhdGVkIHJvd3MNCmBgYHtyIGVjaG89VFJVRSwgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0NCnN1bShkdXBsaWNhdGVkKGRhaWx5X2FsbF9jbGVhbikpDQpkYWlseV9hbGxfY2xlYW4gPC0gZGFpbHlfYWxsX2NsZWFuWyFkdXBsaWNhdGVkKGRhaWx5X2FsbF9jbGVhbiksIF0NCmBgYA0KIyMjIENoZWNrIG51bWJlciBvZiB1bmlxdWUgaWRzIGZvciBudW1iZXIgb2YgdXNlcnMNClNlZSAnY29uc2lkZXJhdGlvbnMnIGZvciBkaXNjdXNzaW9uDQpgYGB7ciBlY2hvPVRSVUUsIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0V9DQpsZW5ndGgodW5pcXVlKGRhaWx5X2FsbF9jbGVhbiRpZCkpDQpgYGANCg0KIyMjIENoZWNrIGNhbGN1bGF0ZWQgY29sdW1ucw0KVG90YWxfZGlzdGFuY2UgaXMgbm90IHRyYWNrZXIgKyBsb2dnZWQsIGFuZCBpdCBpcyBhbHNvIG5vdCBqdXN0IHRyYWNrZXIgZm9yIGFsbCByb3dzLiBVbmNsZWFyIGhvdyB0b3RhbF9kaXN0YW5jZSB3YXMgY2FsY3VsYXRlZCwgc28gdHJhY2tlcl9kaXN0YW5jZSB3aWxsIGJlIHVzZWQgYXMgcHJpbWFyeSBtZWFzdXJlLiB0b3RhbF9kaXN0YW5jZV9rbSBhbmQgdG90YWxfZGlzdGFuY2VfY2FsYyBjb2x1bW5zIGRyb3BwZWQuDQpgYGB7ciBlY2hvPVRSVUUsIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0V9DQpjb2xuYW1lcyhkYWlseV9hbGxfY2xlYW4pDQpkYWlseV9hbGxfY2xlYW4gPC0gbXV0YXRlKGRhaWx5X2FsbF9jbGVhbiwgdG90YWxfZGlzdGFuY2VfY2FsYz10cmFja2VyX2Rpc3RhbmNlX2ttICsgbG9nZ2VkX2Rpc3RhbmNlX2ttKQ0KdG90YWxfY2hlY2sgPC0gaWZlbHNlKGRhaWx5X2FsbF9jbGVhbiR0b3RhbF9kaXN0YW5jZV9rbSA9PSBkYWlseV9hbGxfY2xlYW4kdG90YWxfZGlzdGFuY2VfY2FsYywgIlRSVUUiLCAiRkFMU0UiKQ0KdGFibGUodG90YWxfY2hlY2spDQpkYWlseV9hbGxfY2xlYW4gJT4lDQogIGZpbHRlcih0b3RhbF9kaXN0YW5jZV9rbSE9dG90YWxfZGlzdGFuY2VfY2FsYykgJT4lDQogIGFycmFuZ2UobG9nZ2VkX2Rpc3RhbmNlX2ttKQ0KdG90YWxfY2hlY2syIDwtIGlmZWxzZShkYWlseV9hbGxfY2xlYW4kdG90YWxfZGlzdGFuY2Vfa20gPT0gZGFpbHlfYWxsX2NsZWFuJHRyYWNrZXJfZGlzdGFuY2Vfa20sICJUUlVFIiwgIkZBTFNFIikNCnRhYmxlKHRvdGFsX2NoZWNrMikNCmBgYA0KDQpgYGB7ciBlY2hvPVRSVUUsIG1lc3NhZ2U9RkFMU0UsIHdhcm5pbmc9RkFMU0V9DQpkYWlseV9hbGxfY2xlYW4gPC0gc3Vic2V0KGRhaWx5X2FsbF9jbGVhbiwgc2VsZWN0PSAtYyh0b3RhbF9kaXN0YW5jZV9rbSx0b3RhbF9kaXN0YW5jZV9jYWxjKSkNCmBgYA0KDQojIyMgQ2hlY2sgd2VpZ2h0IGNvbnZlcnRpb25zDQpDaGVjayBhbGwgd2VpZ2h0IG1lYXN1cmVtZW50cyBhcmUgYWNjdXJhdGUgYmV0d2VlbiBrZyBhbmQgcG91bmQgY29sdW1ucy4gMC4wMDEgZGlmZmVyZW5jZSBhY2NvdW50cyBmb3Igcm91bmRpbmcgZGlmZmVyZW5jZXMgaW4gcHJvY2Vzc2luZyBhbmQgd2lsbCBub3QgaW1wYWN0IGZ1dHVyZSBhbmFseXNpcy4NCmBgYHtyIGVjaG89VFJVRSwgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0NCmRhaWx5X2FsbF9jbGVhbiA8LSBtdXRhdGUoZGFpbHlfYWxsX2NsZWFuLCB3ZWlnaHRfcG91bmRzX2NhbGM9d2VpZ2h0X2tnKjIuMjA0NjIpDQpkYWlseV9hbGxfY2xlYW4gPC0gbXV0YXRlKGRhaWx5X2FsbF9jbGVhbiwgd2VpZ2h0X3BvdW5kc19kaWY9IHdlaWdodF9wb3VuZHMtd2VpZ2h0X3BvdW5kc19jYWxjKQ0Kd2VpZ2h0X2NoZWNrIDwtIGlmZWxzZShkYWlseV9hbGxfY2xlYW4kd2VpZ2h0X3BvdW5kc19kaWYgPiAwLjAwMSwgIlRSVUUiLCAiRkFMU0UiKQ0KdGFibGUod2VpZ2h0X2NoZWNrKQ0KYGBgDQojIyBQcmVwYXJlIGhvdXJseSBkYXRhZnJhbWVzIHRvIGpvaW4NCmBgYHtyIGVjaG89VFJVRSwgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0NCnN0cihob3VybHlfY2Fsb3JpZXMpDQpzdHIoaG91cmx5X2ludGVuc2l0eSkNCnN0cihob3VybHlfc3RlcHMpDQpgYGANCmBgYHtyIGVjaG89VFJVRSwgbWVzc2FnZT1GQUxTRSwgd2FybmluZz1GQUxTRX0NCmhvdXJseV9jYWxvcmllcyRBY3Rpdml0eUhvdXI8LSBhcy5QT1NJWGN0KGhvdXJseV9jYWxvcmllcyRBY3Rpdml0eUhvdXIsIGZvcm1hdD0iJW0vJWQvJVkgJUg6JU06JVMiLCB0ej0iVVRDIikNCmhvdXJseV9pbnRlbnNpdHkkQWN0aXZpdHlIb3VyPC0gYXMuUE9TSVhjdChob3VybHlfaW50ZW5zaXR5JEFjdGl2aXR5SG91ciwgZm9ybWF0PSIlbS8lZC8lWSAlSDolTTolUyIsIHR6PSJVVEMiKQ0KaG91cmx5X3N0ZXBzJEFjdGl2aXR5SG91cjwtIGFzLlBPU0lYY3QoaG91cmx5X3N0ZXBzJEFjdGl2aXR5SG91ciwgZm9ybWF0PSIlbS8lZC8lWSAlSDolTTolUyIsIHR6PSJVVEMiKQ0KYGBgDQoNCg0KVE9ETzoNCipJbnZlc3RpZ2F0ZSBjYXJ0ZXNpYW4gZXhwbG9zaW9uIG1vcmUgLSBkbyBJIGFjdHVhbGx5IG5lZWQgdG8gam9pbiB0aGVtPyBJZiBzbywgaG93PyBJZiBub3QsIGp1c3QgY2xlYW4gdGhlIGluZGl2aWR1YWwgZGF0YWZyYW1lcw0KDQoNCklkZWFzIGZvciBhbmFseXNpczoNCipjb3VudCB1bmlxdWUgaWQgZm9yIGFjdGl2aXR5LCBzdGVwcywgY2Fsb3JpZXMsIHNsZWVwLCB3ZWlnaHQgLSBzaG93cyB1c2FnZSAtIHVzZSBncm91cGJ5Pw0KKmFsbCB2YXJpYWJsZXMgYnkgdGltZQ0KKmNvcnJlbGF0aW9uIG9mIGFsbCB2YXJpYWJsZXMNCg0K</div>
 
 
 
