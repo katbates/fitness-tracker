@@ -1,0 +1,104 @@
+---
+title: "Fitness Tracker - A project in R"
+output: html_notebook
+---
+
+## Install packages
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+install.packages("tidyverse")
+library(tidyverse)
+install.packages("janitor")
+library(janitor)
+```
+
+## Read in data from csv
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+daily_activity <- read_csv("C:/Users/katba/Data analysis learning/Portfolio/BellabeatCaseStudy/Fitabase Data 4.12.16-5.12.16/dailyActivity_merged.csv")
+daily_sleep <- read_csv("C:/Users/katba/Data analysis learning/Portfolio/BellabeatCaseStudy/Fitabase Data 4.12.16-5.12.16/sleepDay_merged.csv")
+hourly_calories <- read_csv("C:/Users/katba/Data analysis learning/Portfolio/BellabeatCaseStudy/Fitabase Data 4.12.16-5.12.16/hourlyCalories_merged.csv")
+hourly_intensity <- read_csv("C:/Users/katba/Data analysis learning/Portfolio/BellabeatCaseStudy/Fitabase Data 4.12.16-5.12.16/hourlyIntensities_merged.csv")
+hourly_steps <- read_csv("C:/Users/katba/Data analysis learning/Portfolio/BellabeatCaseStudy/Fitabase Data 4.12.16-5.12.16/hourlySteps_merged.csv")
+weight <- read_csv("C:/Users/katba/Data analysis learning/Portfolio/BellabeatCaseStudy/Fitabase Data 4.12.16-5.12.16/weightLogInfo_merged.csv")
+```
+
+## Explore daily dataframes 
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+head(daily_activity)
+head(daily_sleep)
+str(daily_activity)
+str(daily_sleep)
+```
+
+## Clean daily dataframes, to prepare to join
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+daily_activity_clean <- daily_activity %>% 
+  mutate(ActivityDate= as.Date(ActivityDate, format="%m/%d/%Y"))
+
+daily_sleep_clean <- daily_sleep %>% 
+  mutate(SleepDay= as.Date(SleepDay, format="%m/%d/%Y %H:%M:%S"))
+
+daily_sleep_clean <- clean_names(daily_sleep_clean)
+daily_activity_clean <- clean_names(daily_activity_clean)
+
+daily_activity_clean <- rename(daily_activity_clean, date=activity_date)
+daily_sleep_clean <- rename(daily_sleep_clean, date=sleep_day)
+```
+
+## Join daily dataframes
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+daily <- full_join(daily_activity_clean, daily_sleep_clean, by = c("id", "date"))
+```
+
+## Additional join with weight 
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+weight_clean <- clean_names(weight)
+weight_clean <- weight_clean %>%
+  mutate(date= as.Date(date, format="%m/%d/%Y %H:%M:%S"))
+daily_all <- full_join(daily, weight_clean, by= c("id", "date"))
+```
+
+## Clean daily_all dataframe
+
+### Review datatypes, min and max values
+Datatypes, min and max values all make sense with the nature of the data
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+summary(daily_all)
+```
+
+### Rename columns for consistency across dataset
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+daily_all_clean <- rename(daily_all, total_distance_km=total_distance, tracker_distance_km=tracker_distance, 
+                          logged_distance_km=logged_activities_distance, very_active_km=very_active_distance, 
+                          moderate_active_km=moderately_active_distance, light_active_km=light_active_distance, 
+                          sedentary_active_km=sedentary_active_distance, moderate_active_minutes=fairly_active_minutes,
+                          total_minutes_in_bed=total_time_in_bed)
+```
+
+### Check for duplicated rows
+Remove 3 duplicated rows
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+sum(duplicated(daily_all_clean))
+daily_all_clean <- daily_all_clean[!duplicated(daily_all_clean), ]
+```
+### Check number of unique ids for number of users
+See 'considerations' for discussion
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+length(unique(daily_all_clean$id))
+```
+
+### Check calculated columns
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+colnames(daily_all_clean)
+daily_all_clean <- mutate(daily_all_clean, total_distance_calc=tracker_distance_km + logged_distance_km)
+total_check <- ifelse(daily_all_clean$total_distance_km == daily_all_clean$total_distance_calc, "TRUE", "FALSE")
+table(total_check)
+daily_all_clean %>%
+  filter(total_distance_km!=total_distance_calc) %>%
+  arrange(logged_distance_km)
+total_check2 <- ifelse(daily_all_clean$total_distance_km == daily_all_clean$tracker_distance_km, "TRUE", "FALSE")
+table(total_check2)
+```
+Total_distance is not tracker + logged, and it is also not just tracker for all rows. Unclear how total_distance was calculated, so tracker_distance will be used as primary measure
+
+
+###count unique id for activity, steps, calories, sleep, weight - shows usage
