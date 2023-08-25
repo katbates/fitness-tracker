@@ -112,25 +112,107 @@ daily_all_clean <- mutate(daily_all_clean, weight_pounds_dif= weight_pounds-weig
 weight_check <- ifelse(daily_all_clean$weight_pounds_dif > 0.001, "TRUE", "FALSE")
 table(weight_check)
 ```
-## Prepare hourly dataframes to join
+## Clean hourly dataframes individually
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 str(hourly_calories)
 str(hourly_intensity)
 str(hourly_steps)
 ```
+
+### Convert characters to datetime
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 hourly_calories$ActivityHour<- as.POSIXct(hourly_calories$ActivityHour, format="%m/%d/%Y %H:%M:%S", tz="UTC")
 hourly_intensity$ActivityHour<- as.POSIXct(hourly_intensity$ActivityHour, format="%m/%d/%Y %H:%M:%S", tz="UTC")
 hourly_steps$ActivityHour<- as.POSIXct(hourly_steps$ActivityHour, format="%m/%d/%Y %H:%M:%S", tz="UTC")
 ```
 
+### Clean column names
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(janitor)
+hourly_calories <- clean_names(hourly_calories)
+hourly_intensity <- clean_names(hourly_intensity)
+hourly_steps <- clean_names(hourly_steps)
+```
 
-TODO:
-*Investigate cartesian explosion more - do I actually need to join them? If so, how? If not, just clean the individual dataframes
+### Check min/max values are accurate
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+summary(hourly_calories)
+summary(hourly_intensity)
+summary(hourly_steps)
+```
+# Exploratory data analysis
+## Investigating frequency of use by feature
+Create dataframe with number of days of use per user for selected features
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+
+daily_all_clean <- daily_all_clean %>% mutate_at(c('logged_distance_km'), ~na_if(., 0))
+
+days_tracking_per_user <- daily_all_clean %>%
+  group_by(id) %>%
+  summarise(days_tracking_steps = sum(!is.na(total_steps)), days_logging_activity = sum(!is.na(logged_distance_km)), days_tracking_weight = sum(!is.na(weight_kg)), days_tracking_sleep = sum(!is.na(total_minutes_asleep)))
+
+```
+
+Plot average days of monthly usage
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(dplyr)
+library(tidyr)
+mean_days_tracking_per_user <- days_tracking_per_user %>%
+  pivot_longer(everything(), names_to = "X", values_to = "Y") %>%
+  group_by(X) %>%
+  summarise(Mean = mean(Y, na.rm=TRUE)) 
+
+mean_days_tracking_per_user <- mean_days_tracking_per_user[-5,]
+mean_days_tracking_per_user <- mean_days_tracking_per_user %>%
+  mutate(X = recode(X, "days_logging_activity" = "Manually logging activity", "days_tracking_sleep" = "Sleep tracking", "days_tracking_steps" = "Step tracking", "days_tracking_weight" = "Weight tracking")) %>%
+  arrange(Mean)
+
+mean_days_tracking_per_user %>%
+  ggplot(aes(x=reorder(X, -Mean), y=Mean)) +
+  geom_col(fill="skyblue") +
+  labs(title="Average number of days feature is used over a month", x="Feature", y="Average number of days") +
+  theme_classic()
+
+
+```
+
+## Invesigating each variable over the month
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+daily_all_clean <- subset(daily_all_clean, select= -c(weight_pounds_calc, weight_pounds_dif))
+col_names <- colnames(daily_all_clean)
+col_names <- col_names[-20]
+
+for (i in col_names){
+    plot <- ggplot(daily_all_clean, aes_string(x=daily_all_clean$date, y=i)) +
+    geom_smooth()
+    print(plot)
+}
+
+```
+Observations from line graphs:
+* No clear pattern over the month for any variable
+* Slight downward trend towards the end of the testing period for some variables - however this is likely to be due to testing period ending
+
+## Investigating correlations between variables
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+install.packages("Hmisc")
+library(Hmisc)
+install.packages("corrplot")
+library(corrplot)
+num_only_daily <- daily_all_clean[, sapply(daily_all_clean, is.numeric)]
+cor_daily <- cor(num_only_daily, use="pairwise.complete.obs")
+corrplot(cor_daily, method="color", diag=FALSE, type="upper", tl.cex = 0.6)
+```
+Observations from correlations:
+* Fat column disregarded due to insufficient records, hence strong correlation with id
+* Expected correlations between steps, distance and activity levels
+* No further correlations to investigate at this point
+* Unexpected relationship between calories burnt and weight - this is likely due to limited data in weight fields
+
+
 
 
 Ideas for analysis:
-*count unique id for activity, steps, calories, sleep, weight - shows usage - use groupby?
-*all variables by time
-*correlation of all variables
+* how variables change over the course of the day - hourly
 
