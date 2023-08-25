@@ -121,10 +121,13 @@ str(hourly_steps)
 
 ### Convert characters to datetime
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-hourly_calories$ActivityHour<- as.POSIXct(hourly_calories$ActivityHour, format="%m/%d/%Y %H:%M:%S", tz="UTC")
-hourly_intensity$ActivityHour<- as.POSIXct(hourly_intensity$ActivityHour, format="%m/%d/%Y %H:%M:%S", tz="UTC")
-hourly_steps$ActivityHour<- as.POSIXct(hourly_steps$ActivityHour, format="%m/%d/%Y %H:%M:%S", tz="UTC")
+
+hourly_steps$activity_hour <- as.POSIXct(hourly_steps$activity_hour, format="%m/%d/%Y %I:%M:%S %p")
+hourly_calories$activity_hour <- as.POSIXct(hourly_calories$activity_hour, format="%m/%d/%Y %I:%M:%S %p")
+hourly_intensity$activity_hour <- as.POSIXct(hourly_intensity$activity_hour, format="%m/%d/%Y %I:%M:%S %p")
+
 ```
+
 
 ### Clean column names
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
@@ -180,8 +183,11 @@ mean_days_tracking_per_user %>%
 ## Invesigating each variable over the month
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 daily_all_clean <- subset(daily_all_clean, select= -c(weight_pounds_calc, weight_pounds_dif))
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(ggplot2)
 col_names <- colnames(daily_all_clean)
-col_names <- col_names[-20]
 
 for (i in col_names){
     plot <- ggplot(daily_all_clean, aes_string(x=daily_all_clean$date, y=i)) +
@@ -190,9 +196,9 @@ for (i in col_names){
 }
 
 ```
-Observations from line graphs:
-* No clear pattern over the month for any variable
-* Slight downward trend towards the end of the testing period for some variables - however this is likely to be due to testing period ending
+Observations from line graphs:\
+* No clear pattern over the month for any variable\
+* Slight downward trend towards the end of the testing period for some variables - however this is likely to be due to testing period ending\
 
 ## Investigating correlations between variables
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
@@ -204,15 +210,35 @@ num_only_daily <- daily_all_clean[, sapply(daily_all_clean, is.numeric)]
 cor_daily <- cor(num_only_daily, use="pairwise.complete.obs")
 corrplot(cor_daily, method="color", diag=FALSE, type="upper", tl.cex = 0.6)
 ```
-Observations from correlations:
-* Fat column disregarded due to insufficient records, hence strong correlation with id
-* Expected correlations between steps, distance and activity levels
-* No further correlations to investigate at this point
-* Unexpected relationship between calories burnt and weight - this is likely due to limited data in weight fields
+Observations from correlations:\
+* Fat column disregarded due to insufficient records, hence strong correlation with id\
+* Expected correlations between steps, distance and activity levels\
+* No further correlations to investigate at this point\
+* Unexpected relationship between calories burnt and weight - this is likely due to limited data in weight fields\
+
+## Investigating steps over time by hour
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(dplyr)
+hourly_steps$time <- format(as.POSIXct(hourly_steps$activity_hour), format="%H:%M:%S")
+av_steps_per_hour <- hourly_steps %>%
+  group_by(time) %>%
+  summarise(average_steps= mean(step_total))
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+ggplot(data=av_steps_per_hour) +
+  geom_point(mapping=aes(x=time, y=average_steps)) +
+  theme_minimal() +
+  labs(title= "Average number of steps through the day", x="Time of day", y="Average number of steps") +
+  scale_x_discrete(guide=guide_axis(check.overlap=TRUE))
 
 
+```
 
 
 Ideas for analysis:
-* how variables change over the course of the day - hourly
+* how variables change over the course of the day - hourly - do next two
+* join hourly and show all three on same graph?
+* Calculate average sleeptime and map onto steps chart - this will show best time to target ads
+* Create graph with annotations about common behaviours during day - sleep, commute, work, exercise?
 
