@@ -201,13 +201,21 @@ daily_all_clean <- subset(daily_all_clean, select= -c(weight_pounds_calc, weight
 ```
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-col_names <- colnames(daily_all_clean)
+col_names
+```
 
-for (i in col_names){
-    plot <- ggplot(daily_all_clean, aes_string(x=daily_all_clean$date, y=i)) +
-    geom_smooth()
-    print(plot)
-}
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+col_names <- subset(daily_all_clean, select = c(total_steps, tracker_distance_km, calories, total_minutes_asleep))
+col_names <- colnames(col_names)
+
+my_plots_list <- lapply(col_names, function(i) {
+  ggplot(daily_all_clean, aes_string(x=daily_all_clean$date, y=i)) +
+    geom_smooth(color="skyblue", fill="grey90") +
+    labs(x="Date") +
+    theme_classic() 
+})
+
+grid.arrange(grobs = my_plots_list, ncol=2)
 
 ```
 #### Observations from line graphs:
@@ -218,7 +226,9 @@ for (i in col_names){
 Histogram shows at least one variable is not normally distributed, so spearman method used
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(daily_all_clean, aes(very_active_minutes)) +
-  geom_histogram(binwidth=5)
+  geom_histogram(binwidth=5, fill="skyblue") +
+  theme_classic() +
+  labs(title="Example distribution: 'very_active_minutes")
 
 ```
 
@@ -236,6 +246,53 @@ corrplot(cor_daily, method="color", diag=FALSE, type="upper", tl.cex = 0.6)
 * No further correlations to investigate at this point
 * Unexpected relationship between calories burnt and weight - this is likely due to limited data in weight fields
 
+## Categorising type of user
+Categorise users into activity level by number of steps: high activity =  more than 10,000 steps, medium activity = between 5,000 and 10,000 steps, low activity = less than 5,000 steps
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+av_daily_steps <- daily_all_clean %>%
+  group_by(id) %>%
+  summarise(av_steps=mean(total_steps))
+
+av_daily_steps$user_type <- as.factor(ifelse(av_daily_steps$av_steps>=10000, "High activity", ifelse(av_daily_steps$av_steps<10000 & av_daily_steps$av_steps>=5000, "Medium activity", "Low activity")))
+
+daily_all_clean <- left_join(daily_all_clean, av_daily_steps, by="id")
+
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+daily_all_clean <- mutate(daily_all_clean, sleep_hours = total_minutes_asleep/60)
+
+```
+
+## Plot distance, calories and sleep by usertype
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+ggarrange(
+  ggplot(daily_all_clean, aes(x= reorder(user_type, -calories), y=calories, fill=user_type)) +
+  stat_summary_bin(fun="mean", geom ="bar") +
+  scale_fill_manual(values=c("skyblue4", "skyblue3", "skyblue"))+
+  theme_classic() +
+  labs(title="Average calories by user type", x="User type", y="Average calories") +
+  theme(legend.position = "none"),
+  
+  ggplot(daily_all_clean, aes(x= reorder(user_type, -tracker_distance_km), y=tracker_distance_km, fill=user_type)) +
+  stat_summary_bin(fun="mean", geom ="bar") +
+  scale_fill_manual(values=c("skyblue4", "skyblue3", "skyblue"))+
+  theme_classic() +
+  labs(title="Average distance travelled by user type", x="User type", y="Average distance")+
+  theme(legend.position = "none"),
+  
+  ggplot(daily_all_clean, aes(x= reorder(user_type, -sleep_hours), y=sleep_hours, fill=user_type)) +
+  stat_summary_bin(fun="mean", geom ="bar") +
+  scale_fill_manual(values=c("skyblue4", "skyblue3", "skyblue"))+
+  theme_classic() +
+  labs(title="Average sleep by user type", x="User type", y="Average hours of sleep")+
+  theme(legend.position = "none")
+)
+
+```
+#### Observations:
+* Users who have high activity (based on step count) burn more calories, travel further and sleep less
+
 ## Investigating steps over time by hour
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(dplyr)
@@ -247,12 +304,11 @@ av_steps_per_hour <- hourly_steps %>%
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(data=av_steps_per_hour) +
-  geom_point(mapping=aes(x=time, y=average_steps)) +
+  geom_col(mapping=aes(x=time, y=average_steps), fill="skyblue") +
   theme_minimal() +
   labs(title= "Average number of steps through the day", x="Time of day", y="Average number of steps") +
-  scale_x_discrete(guide=guide_axis(check.overlap=TRUE))
-
-
+  scale_x_discrete(guide=guide_axis(check.overlap=TRUE)) +
+  theme_classic()
 ```
 #### Observations:
 * People are least active from 8pm to 11pm - targetted time for marketing
@@ -299,12 +355,14 @@ hr_steps <- inner_join(hr_min, steps, by = c("id", "time"))
 
 ## Check distribution of variables in preparation for correlation
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-ggplot(hr_steps, aes(value)) +
-  geom_histogram(binwidth=5)
-
+ggarrange(
+  ggplot(hr_steps, aes(value)) +
+  geom_histogram(binwidth=5, fill="skyblue") +
+    theme_classic(),
 ggplot(hr_steps, aes(steps)) +
-  geom_histogram(binwidth=5)
-
+  geom_histogram(binwidth=5, fill="skyblue") +
+  theme_classic()
+)
 ```
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
@@ -313,13 +371,19 @@ cor(hr_steps$value, hr_steps$steps, method="spearman")
 ```
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 ggplot(hr_steps, aes(value, steps)) +
-  geom_point(size=0.2)
+  geom_point(color="skyblue", size=0.4) +
+  theme_classic()+
+  labs(title="Relationship between HR and stepcount", y="Number of steps", x="Heart rate")
 ```
 #### Observations:
 * There is a weak correlation between steps and HR, this suggests fitbit users are using their watches for a range of exercise types. If there was a strong correlation we could assume fitbit users were mainly walking/running for exercise. This result shows some users will be wearing their watch during other types of exercise, such as gym activities.
 
-## Overall conclusions:
+## Overall conclusions for marketing team:
 * Automatic features are more frequently used than manual features. For example, automatic step count used by more people than logging activities. 
 * Sleep tracking used by only 1/3 of participants
 * Users are least active between 8pm and 11pm, making them more susceptible to marketing in this time period
 * FitBit is being used for a range of exercise activities - not just running. 
+
+
+Potential further ideas:
+- days of the week
