@@ -29,6 +29,8 @@ install.packages("tidyverse")
 library(tidyverse)
 install.packages("janitor")
 library(janitor)
+install.packages("readr")
+library(readr)
 ```
 
 ## Read in data from csv
@@ -69,7 +71,7 @@ daily_sleep_clean <- rename(daily_sleep_clean, date=sleep_day)
 daily <- full_join(daily_activity_clean, daily_sleep_clean, by = c("id", "date"))
 ```
 
-## Additional join with weight 
+### Additional join with weight 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 weight_clean <- clean_names(weight)
 weight_clean <- weight_clean %>%
@@ -77,14 +79,12 @@ weight_clean <- weight_clean %>%
 daily_all <- full_join(daily, weight_clean, by= c("id", "date"))
 ```
 
-## Clean daily_all dataframe
+## Clean 'daily' data
 
 ### Review datatypes, min and max values
-Datatypes, min and max values all make sense with the nature of the data
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 summary(daily_all)
 ```
-
 ### Rename columns for consistency across dataset
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 daily_all_clean <- rename(daily_all, total_distance_km=total_distance, tracker_distance_km=tracker_distance, 
@@ -125,7 +125,7 @@ daily_all_clean <- subset(daily_all_clean, select= -c(total_distance_km,total_di
 ```
 
 ### Check weight convertions
-Check all weight measurements are accurate between kg and pound columns. 0.001 difference accounts for rounding differences in processing and will not impact future analysis.
+Check all weight measurements are accurate between kg and pound columns. 0.001 difference accounts for rounding differences in processing and will not impact further analysis.
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 daily_all_clean <- mutate(daily_all_clean, weight_pounds_calc=weight_kg*2.20462)
 daily_all_clean <- mutate(daily_all_clean, weight_pounds_dif= weight_pounds-weight_pounds_calc)
@@ -141,7 +141,6 @@ str(hourly_steps)
 
 ### Convert characters to datetime
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-
 hourly_steps$activity_hour <- as.POSIXct(hourly_steps$activity_hour, format="%m/%d/%Y %I:%M:%S %p")
 hourly_calories$activity_hour <- as.POSIXct(hourly_calories$activity_hour, format="%m/%d/%Y %I:%M:%S %p")
 hourly_intensity$activity_hour <- as.POSIXct(hourly_intensity$activity_hour, format="%m/%d/%Y %I:%M:%S %p")
@@ -151,7 +150,6 @@ hourly_intensity$activity_hour <- as.POSIXct(hourly_intensity$activity_hour, for
 
 ### Clean column names
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-library(janitor)
 hourly_calories <- clean_names(hourly_calories)
 hourly_intensity <- clean_names(hourly_intensity)
 hourly_steps <- clean_names(hourly_steps)
@@ -165,9 +163,8 @@ summary(hourly_steps)
 ```
 # Exploratory data analysis
 ## Investigating frequency of use by feature
-Create dataframe with number of days of use per user for selected features
+### Create dataframe with number of days of use per user for selected features
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-
 daily_all_clean <- daily_all_clean %>% mutate_at(c('logged_distance_km'), ~na_if(., 0))
 
 days_tracking_per_user <- daily_all_clean %>%
@@ -176,7 +173,7 @@ days_tracking_per_user <- daily_all_clean %>%
 
 ```
 
-Plot average days of monthly usage
+### Plot average days of monthly usage
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 library(ggplot2)
 library(dplyr)
@@ -196,8 +193,6 @@ mean_days_tracking_per_user %>%
   geom_col(fill="skyblue") +
   labs(title="Average number of days feature is used over a month", x="Feature", y="Average number of days") +
   theme_classic()
-
-
 ```
 
 ## Invesigating each variable over the month
@@ -206,7 +201,6 @@ daily_all_clean <- subset(daily_all_clean, select= -c(weight_pounds_calc, weight
 ```
 
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-library(ggplot2)
 col_names <- colnames(daily_all_clean)
 
 for (i in col_names){
@@ -216,9 +210,9 @@ for (i in col_names){
 }
 
 ```
-Observations from line graphs:\
-* No clear pattern over the month for any variable\
-* Slight downward trend towards the end of the testing period for some variables - however this is likely to be due to testing period ending\
+#### Observations from line graphs:
+* No clear pattern over the month for any variable
+* Slight downward trend towards the end of the testing period for some variables - however this is likely to be due to testing period ending
 
 ## Investigating correlations between variables
 Histogram shows at least one variable is not normally distributed, so spearman method used
@@ -236,11 +230,11 @@ library(corrplot)
 cor_daily <- cor(num_only_daily, use="pairwise.complete.obs", method="spearman")
 corrplot(cor_daily, method="color", diag=FALSE, type="upper", tl.cex = 0.6)
 ```
-Observations from correlations:\
-* Fat column disregarded due to insufficient records, hence strong correlation with id\
-* Expected correlations between steps, distance and activity levels\
-* No further correlations to investigate at this point\
-* Unexpected relationship between calories burnt and weight - this is likely due to limited data in weight fields\
+#### Observations from correlations:
+* 'Fat' column disregarded due to insufficient records
+* Expected correlations between steps, distance and activity levels
+* No further correlations to investigate at this point
+* Unexpected relationship between calories burnt and weight - this is likely due to limited data in weight fields
 
 ## Investigating steps over time by hour
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
@@ -260,8 +254,8 @@ ggplot(data=av_steps_per_hour) +
 
 
 ```
-Observations:/
-* People least active from 8pm to 11pm - targetted time for marketing
+#### Observations:
+* People are least active from 8pm to 11pm - targetted time for marketing
 
 ## Read in dataframes for HR and steps by minute
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
@@ -284,28 +278,23 @@ library(dplyr)
 steps <- rename(steps, time = activity_minute)
 ```
 
-## Change HR to by minute
-Group by id, then average HR for each minute
+#### Change HR to by minute
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 hr_min <- hr %>%
   group_by(id, time = cut(time, breaks= "1 min")) %>%
   summarise(value= mean(value))
 ```
 
-Change time to datetime
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
-
 glimpse(hr_min)
 hr_min$time <- as.character(hr_min$time)
 hr_min$time <- as.POSIXct(hr_min$time, format="%Y-%m-%d %H:%M:%S")
 
 ```
 
-Join HR and steps
+## Join HR and steps
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 hr_steps <- inner_join(hr_min, steps, by = c("id", "time"))
-
-
 ```
 
 ## Check distribution of variables in preparation for correlation
@@ -326,9 +315,11 @@ cor(hr_steps$value, hr_steps$steps, method="spearman")
 ggplot(hr_steps, aes(value, steps)) +
   geom_point(size=0.2)
 ```
-Findings:/
+#### Observations:
 * There is a weak correlation between steps and HR, this suggests fitbit users are using their watches for a range of exercise types. If there was a strong correlation we could assume fitbit users were mainly walking/running for exercise. This result shows some users will be wearing their watch during other types of exercise, such as gym activities.
 
-
-Ideas for analysis:
-
+## Overall conclusions:
+* Automatic features are more frequently used than manual features. For example, automatic step count used by more people than logging activities. 
+* Sleep tracking used by only 1/3 of participants
+* Users are least active between 8pm and 11pm, making them more susceptible to marketing in this time period
+* FitBit is being used for a range of exercise activities - not just running. 
