@@ -2,6 +2,26 @@
 title: "Fitness Tracker - A project in R"
 output: html_notebook
 ---
+## Business task
+* Identify trends in smart device usage at competitor companies
+* Apply trends in smart device usage to bellabeat customers
+* Produce high level recommendations for bellabeat marketing strategy
+
+## Data source
+The project uses FitBit Fitness Tracker Dataset on Kaggle, made available through Mobius
+
+#### Details:
+* 30 FitBit users consented to tracking as part of distributed survey via Amazon Mechanical Turk for a month period in 2016
+* The dataset includes 18 csv files containing: daily calories, steps, activity intensity and sleep; hourly calories, intensities and steps; minutely calories, intensities, METs, sleep and steps; user inputted weight data
+* The dataset is open source and all participants consented to their data being used
+
+#### Considerations
+* Metadata from Kaggle was missing but has been located
+* Sample size is 30 people over 1 month. This questions the validity of any generalisations about trends in the data
+* Metadata from kaggle state 30 users, original study states 35, dataset contains 33
+* There is no information about the 30 participants, meaning the data is likely to be biased
+
+# Analysis
 
 ## Install packages
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
@@ -201,13 +221,19 @@ Observations from line graphs:\
 * Slight downward trend towards the end of the testing period for some variables - however this is likely to be due to testing period ending\
 
 ## Investigating correlations between variables
+Histogram shows at least one variable is not normally distributed, so spearman method used
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+ggplot(daily_all_clean, aes(very_active_minutes)) +
+  geom_histogram(binwidth=5)
+
+```
+
 ```{r echo=TRUE, message=FALSE, warning=FALSE}
 install.packages("Hmisc")
 library(Hmisc)
 install.packages("corrplot")
 library(corrplot)
-num_only_daily <- daily_all_clean[, sapply(daily_all_clean, is.numeric)]
-cor_daily <- cor(num_only_daily, use="pairwise.complete.obs")
+cor_daily <- cor(num_only_daily, use="pairwise.complete.obs", method="spearman")
 corrplot(cor_daily, method="color", diag=FALSE, type="upper", tl.cex = 0.6)
 ```
 Observations from correlations:\
@@ -234,11 +260,75 @@ ggplot(data=av_steps_per_hour) +
 
 
 ```
+Observations:/
+* People least active from 8pm to 11pm - targetted time for marketing
+
+## Read in dataframes for HR and steps by minute
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+hr <- read_csv("C:/Users/katba/Data analysis learning/Portfolio/BellabeatCaseStudy/Fitabase Data 4.12.16-5.12.16/heartrate_seconds_merged.csv")
+steps <- read_csv("C:/Users/katba/Data analysis learning/Portfolio/BellabeatCaseStudy/Fitabase Data 4.12.16-5.12.16/minuteStepsNarrow_merged.csv")
+```
+
+## Clean HR and steps to prepare for join
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+hr <- clean_names(hr)
+steps <- clean_names(steps)
+
+steps$activity_minute <- as.POSIXct(steps$activity_minute, format="%m/%d/%Y %I:%M:%S %p")
+hr$time <- as.POSIXct(hr$time, format="%m/%d/%Y %I:%M:%S %p")
+
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+library(dplyr)
+steps <- rename(steps, time = activity_minute)
+```
+
+## Change HR to by minute
+Group by id, then average HR for each minute
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+hr_min <- hr %>%
+  group_by(id, time = cut(time, breaks= "1 min")) %>%
+  summarise(value= mean(value))
+```
+
+Change time to datetime
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+
+glimpse(hr_min)
+hr_min$time <- as.character(hr_min$time)
+hr_min$time <- as.POSIXct(hr_min$time, format="%Y-%m-%d %H:%M:%S")
+
+```
+
+Join HR and steps
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+hr_steps <- inner_join(hr_min, steps, by = c("id", "time"))
+
+
+```
+
+## Check distribution of variables in preparation for correlation
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+ggplot(hr_steps, aes(value)) +
+  geom_histogram(binwidth=5)
+
+ggplot(hr_steps, aes(steps)) +
+  geom_histogram(binwidth=5)
+
+```
+
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+cor(hr_steps$value, hr_steps$steps, method="spearman")
+
+```
+```{r echo=TRUE, message=FALSE, warning=FALSE}
+ggplot(hr_steps, aes(value, steps)) +
+  geom_point(size=0.2)
+```
+Findings:/
+* There is a weak correlation between steps and HR, this suggests fitbit users are using their watches for a range of exercise types. If there was a strong correlation we could assume fitbit users were mainly walking/running for exercise. This result shows some users will be wearing their watch during other types of exercise, such as gym activities.
 
 
 Ideas for analysis:
-* how variables change over the course of the day - hourly - do next two
-* join hourly and show all three on same graph?
-* Calculate average sleeptime and map onto steps chart - this will show best time to target ads
-* Create graph with annotations about common behaviours during day - sleep, commute, work, exercise?
 
